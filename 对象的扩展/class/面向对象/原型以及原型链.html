@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+        1.理解构造函数，原型以及实例对象的关系
+            （1）每一个构造函数都有一个prototype属性，这个属性也是一个对象，即原型对象
+            （2）原型对象上都有一个属性constructor，表明了该原型对象所属的构造函数
+            （3）每一个实例对象都有一个__proto__属性，这个属性也指向原型队形，在编码过程中，这个属性不能写
+            总结：构造函数.prototype===实例对象.__proto__;
+                  构造函数.prototype.constructor===构造函数
+        */
+        function Person(name,age){
+            this.name=name;
+            this.age=age;
+        }
+
+        /*
+        var per=new Person('nym',20);这句话做了三件事
+        1.先创建一个空对象per=> var per={};
+        2.per.__proto__=Person.prototype  => 将实例对象per的__proto__设置为构造函数的原型对象
+        3.Person.call(per,'nym',20);   =>调用构造函数实例化per,使用call或者apply
+        */
+
+        var per=new Person('nym',20);
+        console.log(Person.prototype.__proto__.__proto__);//null
+        console.log(Object.prototype.__proto__);//Object的原型的原型就是null
+        // console.log(per);
+    </script>
+</body>
+</html>

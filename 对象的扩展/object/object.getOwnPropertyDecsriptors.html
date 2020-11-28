@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            本文介绍一些获取属性描述的方法
+            Object.getOwnPropertyDescriptor(obj,'name'):获取obj对象中name属性的描述对象，只获得对象中的某一个属性的描述对象
+            Object.getOwnPropertyDescriptors(obj)：会获得obj对象中所有属性的描述对象，包含使用get和set创建的对象
+            引入这个方法的目的是为了解决Object.assign()复制过程中不能复制get和set创建的对象带来的问题
+            Object.assign()只是复制某个属性的值，不会复制他背后的赋值方法或者取值方法
+            可以使用Object.definedProperties和Object.getOwnPropertyDescriptors一起实现真正的复制
+        */
+        let obj={
+            name:'nym',
+            get fn(){
+                // console.log(this.nym);
+            }
+        }
+        // console.log(Object.getOwnPropertyDescriptor(obj,'name'));
+        // console.log(Object.getOwnPropertyDescriptors(obj));
+        let result={};
+        // Object.assign(result,obj)
+        // console.log(result);//获得的get创建的fn函数的值为undefined
+        /*
+            实现真正的复制需要两步，1.获取对象中所有属性和方法的描述对象 Object.getOwnPropertyDescriptors
+            2.使用Object.defineProperties将对象的属性和方法进行定义
+        */
+        Object.defineProperties(result,Object.getOwnPropertyDescriptors(obj))
+        console.log(Object.getOwnPropertyDescriptor(obj,'fn'));
+
+        /*
+            使用Object.getOwnPropertyDescriptors与Object.create结合可以将对象的属性克隆成一个新对象
+            Object.cerate()的第一个参数是一个原型对象，第二个参数是一个属性描述对象
+        */
+        let obj1={
+            id:'1',
+            get f(){}
+        }
+        let source=Object.getPrototypeOf(obj1);
+        // console.log(source);//Object.property
+        let source1=Object.getOwnPropertyDescriptors(obj1);
+        let clone=Object.create(source,source1);
+        console.log(clone);
+    </script>
+</body>
+</html>

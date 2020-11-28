@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+        es6中提出symbol是为了避免属性名或者方法名的命名冲突，表示独一无二的值
+        在symbol中可以在symbol函数添加参数，用于对当前属性值进行描述
+        如果symbol方法的参数是一个对象，就会调用该对象的toString方法，将其转换为字符串再生成属性
+        */
+        let s=Symbol();//表示属性s是独一无二的值
+        console.log(typeof s);//symbol
+
+        let obj={
+            name:'nym',
+            toString(){
+                return 'abc';
+            }
+        }
+        let str=Symbol(obj);
+        console.log(str);//symbol(abc)
+
+        /*
+        symbol参数是对当前定义的属性进行描述，
+        当两个symbol方法的参数相同的时候，定义的属性也是不等的
+        */
+        let a=Symbol('foo');
+        let b=Symbol('foo');
+        console.log(a===b);//false
+
+
+        /*
+        symbol值不能与其他类型的值进行运算，但是可以将symbol转换为字符串
+        symbol也可以转换为布尔值，但是不能转换为数值
+
+        let string=Symbol('foo');字符串foo是对string的描述，如果要获取这个描述，
+        必须简化string转换为字符串string.toString()或者String(string)
+        */
+        let string=Symbol('foo');
+        console.log(string.toString());//'symbol('foo')'
+        console.log(String(string));
+
+        //使用Symbol原型方法可以直接得到某一属性的描述，不必再转换为字符串
+        console.log(string.description);//foo
+
+        /*对象中的属性使用symbol定义，不会被for..in for..of Object.keys()    object.getOwnPropertyName()  JSON.stringy()遍历
+        但是可以被Object.getOwnPropertySymbol()函数遍历，返回一个数组，数组中的元素就是当前对象被symbol定义的属性名
+        */
+        let object={};
+        let numA=Symbol();
+        let numB=Symbol();
+        object[numA]='nym';
+        object[numB]=23;
+        let arr=Object.getOwnPropertySymbols(object);
+        console.log(arr);
+
+
+        /*symbol.for():接受一个字符串作为参数，
+        首先会在当前对象中查找有没有以该描述字符串定义的属性，如果有，就返回该属性，可以对该属性进行重写
+        如果没有找到，就创建当前描述字符串定义的属性
+        */
+        let symbolA=Symbol.for('foo');
+        let symbolB=Symbol.for('foo');
+        console.log(symbolA===symbolB);//true
+
+        //symbol.for()与symbol()的区别,前者会先搜索，没有找到再回创建，后者直接进行创建
+        console.log(Symbol.for('foo')===Symbol.for('foo'));//true
+        console.log(Symbol('foo')===Symbol('foo'));//false
+
+
+        //Symbol.keyFor返回的是一个已经登记过的属性的描述
+        let keyA=Symbol.for('foo');
+        console.log(Symbol.keyFor(keyA));//foo
+
+        let keyB=Symbol('str');
+        console.log(Symbol.keyFor(keyB));//undefined,因为keyB没有登记
+    </script>
+</body>
+</html>

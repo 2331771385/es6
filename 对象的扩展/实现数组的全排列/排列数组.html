@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            对数组进行全排列
+
+        */
+        var arr=[1,2,3,4];
+
+        function sortArr(s) {
+            let length=arr.length;//4
+            for(var i=0;i<length;i++){
+                if (s.length==length-1) {
+                    if (s.indexOf(arr[i])<0) {
+                        console.log(s+arr[i]);
+                        continue;
+                    }
+                }
+                if (s.indexOf(arr[i])<0) {
+                    sortArr(s+arr[i])
+                }
+            }
+        }
+        
+        sortArr('');
+    </script>
+</body>
+</html>

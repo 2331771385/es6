@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            set的数据结构set中存放的都是不重复的元素
+            1.set的属性和方法：属性，Set本身就是一个函数，可以使用new关键字创建一个set实例对象，，size属性可以计算出set的成员数
+            2.set中的方法分为操作方法和遍历方法：
+                操作方法：add(v)想set对象中添加成员。返回的是set实例本身，因此可以使用链式调用想set中添加多个成员
+                        delete(v)从set实例中删除某个成员，返回的是一个布尔值，表示删除是否成功
+                        has(v)返回的是一个布尔值，判断参数是否再set实例对象中
+                        clear()：清除所有的实例对象成员，此时再结合size使用，返回的是0.
+                遍历方法：keys();返回一个遍历器数组，里面的成员是所有的键名
+                        values();返回成员中所有的键值，是一个数组
+                        entries();返回的是一个键值对的组合，是一个数组
+                        forEach();set实例对象中的每一个成员都会调用这个回调函数，没有返回值
+                        注意：因为set中不存在键名，因此键名和键值代表同一元素，keys()和values()返回的值是一样的
+                判断set中的对象成员是使用绝对等于（===）,但是与绝对等于有有一些不同，-0与+0是相等的
+                NaN与NaN是相等的。因此再成员中，5和'5'被认为是不相等的。
+        */
+       let set=new Set()
+                .add(1)
+                .add(true)
+                .add('str')
+                .add({name:'nym'});//创建一个set实例对象
+        // console.log(set);
+        console.log(set.size);//4，因为size是属性，因此不需要在size后面添加括号
+        console.log(set.has(1));//true
+        console.log(set.has(true));//true
+        // console.log(set.has(str));//报错，因为再set中使用的是绝对等于，str与字符串'str'被认为是不相等的。
+        console.log(set.delete(1));//true,代表删除成功
+        console.log(set.has(1));//false，因为删除成功，set成员中不含有这个变量
+        // console.log(set.clear());//undefined
+        // console.log(set.size);//0因为使用clear删除成功了，所以现在成员中不啊和你有任何属性
+
+
+        /*
+            set中的遍历方法
+            console.log(Set.prototype[Symbol.iterator]===Set.prototype.values);//true
+            这说明set结构中默认的遍历器方法是values，因此可以将set.values()写成set
+        */
+
+       for(let item of set.keys()){
+           console.log(item);//true,str,{name:'nym'}
+       }
+       for (const item of set.values()) {
+           console.log(item);//true,str,{name:'nym'}
+       }
+       for (const item of set) {
+           console.log(item);
+       }
+
+       for (const item of set.entries()) {
+           console.log(item);//[true,true],[str,str],[{name:'nym'},{name,'nym'}]
+       }
+       for (const [k,v] of set.entries()) {
+           console.log(k,v);
+       }
+
+       console.log(Set.prototype[Symbol.iterator])//values()
+       console.log(Set.prototype[Symbol.iterator]===Set.prototype.values);//true
+
+       set.forEach(item=>console.log(item));//将set结构中的每一个成员都输出
+
+
+
+       /*
+        set的用途：1.数组去重
+                  2.数组中的map与filter方法页可以用于set结构中
+                  3.实现并集，交集，差集
+       */
+      let setAtt=new Set([1,2,3,4,3,2]);
+      console.log([...setAtt]);//1,2,3,4
+
+      //map方法
+      setAtt=new Set([...setAtt].map(x=>x*2));//返回set结构中的数据，将数据成员都与2相乘
+      console.log(setAtt);
+      
+       //filter方法
+       setAtt=new Set([...setAtt].filter(item=>item<3));//返回的是set结构的数组，筛选出成员中小于3的成员
+       console.log(setAtt);
+
+       let fArr=new Set([1,2,3,4,5]);
+       let sArr=new Set([2,4,5,2,6,7]);
+       //实现两个数组间的并集,使用扩展运算符将两个数组中的数据进行展开[...fArr,...sArr]，使用set结构对数组中的数据进行去重
+       let combina=new Set([...fArr,...sArr]);//返回的是set结构
+       console.log(combina);//set[1,2,3,4,5,6,7]
+
+       //交集，说明两个数组中都有的元素,
+       let sortSet=new Set([...fArr].filter(item=>sArr.has(item)));
+       console.log(sortSet);//返回的是set结构的数据[2,4,5]
+       console.log([...sortSet]);//返回的是数组形式的数据，[2,4,5]
+
+       //差集，a数组中存在的元素再b数组中不存在
+       let cSet=new Set([...fArr].filter(item=>!sArr.has(item)));
+       console.log(cSet);//返回的是set结构的数据，第一个数组中有的第二个数组中不存在的成员
+    </script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            本文主要介绍一些object的方法
+            1.Object.keys(obj):用于遍历参数对象自身所有可枚举的属性的键名，返回一个数组
+            2.Object.values():用于遍历参数对象自身所有可遍历的属性的键值，返回的是一个数组，会忽略掉Symbol的属性
+            返回顺序按照属性的遍历的顺序进行返回，如果属性名都是数值，那么键值会按照数值从小到大进行返回
+            3.Object.entries()：返回一个数组，用于遍历对象自身的键值对，返回的是一个数组，数组中的每一项又是一个数组
+            用途：将对象转换为真正的map结构的数据.因为map结构接受的是一个二维数组，这个方法返回的正好是二维数组
+        */
+        let obj={a:1,b:2,c:3};
+        console.log(Object.keys(obj));
+        let obj1={100:'a',2:'b',7:'c'}
+        console.log(Object.values(obj1));//b,c,a按照键名数值从小到大开始输出
+        let obj2=Object.create({},{p:{
+            value:26,
+            configurable:true,
+            enumerable:false,
+            writable:true
+        }})
+        console.log(Object.values(obj2));//26因为此时添加的对象属性的描述对象是可枚举的
+        console.log(Object.values(obj2));//[]因为此时添加的对象水泥股的描述对象是不可枚举的，所以这个属性不能通过该方法遍历到，
+        console.log(Object.values('hello'));//["h", "e", "l", "l", "o"]如果是字符串，就会返回组成字符串的每个字符
+        console.log(Object.values(1));//[]因为数值和布尔值的包装对象都不会为实例添加飞机成的属性，所以默认是不可遍历的
+        console.log(Object.entries(obj1));
+
+
+        //将对象转换为真正的map结构
+        let map=new Map(Object.entries(obj1));
+        console.log(map);//Map(3) {"2" => "b", "7" => "c", "100" => "a"}
+
+
+        /*
+            自己实现Object.entries()方法
+        */
+        function entries(obj) {
+            let result=[];//声明一个数组，用于接受返回值
+            for(let key of Object.keys(obj)){
+                //遍历该对象所有的键名,想数组中添加键名与键值
+                result.push([key,obj[key]])
+            }
+            console.log(result);
+        }
+        entries(obj1)
+    </script>
+</body>
+</html>

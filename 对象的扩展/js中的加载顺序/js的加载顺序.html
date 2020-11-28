@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            js的加载顺序的问题：分为三种情况
+            1.<script src=''>
+            2.<script defer>
+            3.<script async>
+            对于第一种情况,没有任何修饰符修饰，取决于脚本的位置，放在哪里就在哪里执行
+            对于第二种情况，脚本的加载和文档的解析同时发生，不过在文档解析完成之后在执行脚本文件，不会影响页面的渲染，多个defer会按照顺序执行
+            对于第三种情况，属于异步加载，文档在解析的过程中，遇到async修饰的脚本时，不会暂停文档的解析，此时脚本的加载机制开始执行加载，一旦脚本加载完成就会
+                立刻执行，此时，如果文档解析没有完成，会阻碍页面的渲染。多个async修饰的脚本不一定会按照顺序执行。
+        */
+        
+    </script>
+</body>
+</html>

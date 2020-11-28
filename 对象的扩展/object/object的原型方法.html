@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            设置与取得原型的方法：
+            1.setPropertyOf(obj,proto):用来设置对象的原型方法,
+            将proto对象设为obj对象的原型
+            2.getPropertyOf()用于读取对象的原型对象
+        */
+        let obj={
+            a:1
+        }
+        let proto={
+            b:2,
+            c:3
+        };
+        //将proto对象设为obj对象的原型，所以从obj对象能够读取proto对象的属性
+        Object.setPrototypeOf(obj,proto);
+        console.log(obj);
+        Object.setPrototypeOf('1',{c:5});
+        //当第一个参数不是对象的时候，会进行自动转换，但是由于最后返回的还是第一个参数，所以没有任何效果
+        let str='1';
+        Object.setPrototypeOf(str,{c:5})
+        console.log(str);
+        //如果第一个参数是undefined或者null，咋不会进行转换，回报错，因为这两个参数没法转对象
+        // Object.setPrototypeOf(null,{c:2})//报错
+        console.log(Object.getPrototypeOf(obj));//获取对象的原型
+        
+        console.log(Object.getPrototypeOf(1)===Number.prototype);//true,参数1会先转换为原型，然后再与Number的原型相比
+        console.log(Object.getPrototypeOf('hello')===String.prototype);//true.字符串先转换为字符串对象
+        console.log(Object.getPrototypeOf(null));//报错，因为null和undefined无法转换为对象的形式
+    </script>
+</body>
+</html>

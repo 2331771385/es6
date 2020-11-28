@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <ul id="myDiv">
+        <li>hello</li>
+        <li name='nym'>nym</li>
+        <li>lwl</li>
+    </ul>
+    
+    <script>
+        /*
+            先进行一系列的文档和node操作
+        */
+        var doctype=document.doctype;
+        //console.log(doctype);//<!DOCTYPE html>   返回的是文档的类型
+        var docNode=doctype.nodeType;//10
+        var docName=doctype.nodeName;//html
+        var docVal=doctype.nodeValue;//null
+        var docParent=doctype.parentNode;//#document   父节点是document
+        var docChild=doctype.childNodes;//[]
+        var firstNode=docChild[0];//undefined
+
+
+        //document是Document的一个实例，表示整个html页面
+        var nodeType=document.nodeType;//9
+        var nodeName=document.nodeName;//#document
+        var nodeVal=document.nodeValue;//null
+        var parent=document.parentNode;//null
+        var nodeChild=document.childNodes;//[html,html]
+        var firstNodeChild=nodeChild[0];//<!DOCTYPE html>
+        var lastNodeChild=nodeChild[1];//html页面
+        /*
+            document有两个内置的属性可以访问其子节点的方法
+            第一个就是documentElement,这个属性始终指向html标签，返回的是整个页面的信息
+            另一个属性是使用childNodes
+
+            document还有一个body属性，指向页面的body元素
+            可以对页面中的信息进行修改，例如标题
+
+            还有3个属性与请求的网页有关，url,domain,referrer
+            url:请求的地址，就是打开这个网页时，浏览器上的地址
+            domain:请求地址中的域名
+            referrer属性中包含着连接到当前页面的那个页面的链接
+            这三个属性中只有domain属性可以修改，但是修改要按照一定的规则进行修改
+            如果域名是proxy.wx.com可以将起修改为wx.com
+
+
+            在document中查找元素，可以根据指定的方法
+            document.getElementById可以根据指定的id进行查找，在查找的时候，严格区分大小写
+            document.getElementsByTagName根据指定的标签名进行查找，将所有含有该标签的元素都返回到htmlCollection集合中
+            HTMLCollection项中还有一个方法是namedItem()这个方法可以通过指定的name值获取集合中的具体项
+
+            如果项获取页面上所有的标签，可以给getElementsByTagName的参数传递*，*代表的是全部
+            可以向getElementsByName方法中传递一个name值获取所有name值相同的标签，这个方法使用与单选按钮中
+            单项按钮中的name都是一样的，这样就能保证发送给浏览器的是一个值，保证了唯一性
+        */
+        var nodeChildOther=document.documentElement;//返回的是html页面
+        var bodyNode=document.body;//指向body元素
+        var title=document.title;//Document
+        document.title='对document的基本操作';//对打开的浏览器窗口的标题进行修改
+        var url=document.URL;//当前页面的地址
+        var domain=document.domain;//当前页面地址中的域名
+        var referrer=document.referrer;//链接到当前页面的那个页面的链接
+        var ul=document.getElementById('myDiv');//获取id为myDiv的标签
+        var li=document.getElementsByTagName('li');//返回所有含有li标签的HTMLCollection
+        var length=li.length;//可以通过length属性获取HTMLCollection的长度
+        var firstLi=li[0];//可以通过下标来获取HTMLCollection中具体的项
+        var lastLi=li.item(2);//可以通过item方法获取HTMLCollection中具体的项
+        var namedLi=li.namedItem('nym');//获取name值为nym的li标签
+        var allTags=document.getElementsByTagName('*');//获取页面上所有的标签
+
+        console.log(allTags);
+    </script>
+
+
+
+
+
+
+
+    <script>
+        /*
+            DOM的核心是：document。定义了操作和访问网页的方法和接口。
+            DOM中定义了访问XML和Html的方法
+            在 DOM中，定义了12中节点类型，其中最常用的就是document节点、text节点、属性节点、注释节点
+            document表示整个文档，是Document的一个实例
+            Element节点可以访问html和xml元素
+            Text节点可以用来访问文本元素
+            Comment节点可以用来访问注释元素
+
+
+            先进行document操作，使用document对文档进行一些访问操作
+        */
+    </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>element的基础操作</title>
+</head>
+<body>
+    <div id="mydiv">
+        <p>1</p>
+        <p>2</p>
+    </div>
+    <div id="sec" class="tag" title="hello"></div>
+
+    <script>
+        var element=document.getElementById('mydiv');
+        var eletype=element.nodeType;//1,代表的是element类型
+        var eleName=element.nodeName;//DIV，代表的是标签的名字
+        var eleVal=element.nodeValue;//null
+        var eleParent=element.parentNode;//当前标签的父节点，此时的标签的父节点是body，所以返回的是body元素
+        var childNode=element.childNodes;//此时返回的子节点的长度为5，其中包含2个p标签，3个p标签之间的空白text,返回的内容是text,p,text,p,text
+        var firstChild=element.childNodes.firstChild;//空白的text会返回undefined
+
+        /*
+            对第二个div进行操作1,获取第二个div中的一些属性，id,class,title
+            可以使用方法进行操作
+        */
+        var sec=document.getElementById('sec');
+        var idVal=sec.id;//sec,获取的是该标签的id值
+        var className=sec.className;//tag因为class是js中关键字，所以获取class属性的时候，使用的是className
+        var title=sec.title;//hello,获取的该标签下的title值
+        var idVal1=sec.getAttribute('id');//sec,获取到的值与sec.id的值一样
+        var className1=sec.getAttribute('class');//tag,获取到的值与使用sec.className获取到的值一样
+        var lang=sec.setAttribute('lang','china');//向标签中添加lang属性，属性值为china
+        var lang1=sec.getAttribute('lang');//china,使用属性可以获取到
+        var remove=sec.removeAttribute('title');//移除该属性
+
+
+        console.log(sec);
+    </script>
+    <script>
+        /*
+            本小节主要是操作element
+            用于表现html或者xml的元素，提供了对元素标签名以及子节点的访问与操作
+            可以使用方法对属性进行操作
+        */
+    </script>
+</body>
+</html>

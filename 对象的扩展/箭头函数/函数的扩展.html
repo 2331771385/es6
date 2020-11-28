@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            箭头函数：有几点需要注意一下
+            1.箭头函数中没有this，因此，箭头函数不能用做构造函数
+            2.箭头函数中没有arguments
+            
+        */
+        /*
+        先介绍以下函数的默认值问题
+        */
+        function fn(x,y=0) {
+            // console.log(x,y);
+        }
+        fn(3);//默认想函数中传入x=3,y值使用默认值0
+        fn(3,4);//当y值有的时候，就传入y值
+        fn('');//当向x传空值的时候，默认是传递过去了
+
+        /*
+            当函数参数是一个解构赋值的时候，如果没有设置函数的默认参数，只是设置了解构赋值
+            当调用了这个函数的时候，必须为这个函数传递一个对象，否则就会报错
+        */
+        function f({x=0,y=0}={}) {
+            // debugger
+            // console.log(x,y);
+        }
+        f({});
+        f({x:3,y:5});
+        f({x:6});
+
+
+        function f1({x,y}={x:3,y:6}) {
+            // debugger
+            // console.log(x,y);
+        }
+        f1({});//undefined,undefined
+        f1({x:3});//3  undefined
+
+
+        /*
+            几种常见的参数默认值,当函数的参数设置了默认值以后，这些参数会形成一个单独的作用于，如果再当前作用域中查找不到变量
+            会去执行环境的上下文中查找
+            
+        */
+        let x=2;
+        function getVal(x,y=x) {
+            console.log(x,y);
+        }
+        /*
+            调用getVal()函数的时候，传递参数3，
+            再函数中，参数会形成一个单独的作用域，首先定义一个变量x，然后定义一个变量y，将变量x的值赋值给变量y
+            调用函数的时候，因为传递了参数，此时参数作用域的x的值就是3，并且将3赋值给变量y，所以最后输出的结果就是3，3
+        */
+        getVal(3);
+        getVal();//因为函数调用的时候没有传递任何值，所以两个变量都是undefined
+
+        function getId(x=x){};//这个函数调用会报错，因为再x定义没完成的时候就使用x，所以会报错.形成暂时性死区。
+
+        /*
+            当函数参数的默认值是一个函数的时候，也会形成参数的单独作用域
+
+        */
+        let foo='我是外界的变量';
+        function getValue(foo='我是内部的变量',fn=()=>foo) {
+            console.log(foo);
+            console.log(fn());
+        }
+        /*
+            再调用函数的时候，函数的参数使用的是默认的参数，首先声明一个变量foo,然后声明一个箭头函数，
+            打印出变量foo,因为此时函数和变量foo再同一作用域，因此会使用改作用域下的变量foo
+
+        */
+        getValue();//此时输出的2个值都是内部的变量
+
+
+        function getFoo(fn=()=>foo) {
+            console.log(fn());
+        }
+        /*
+            调用函数的时候，会形成一个单独的作用域，在这个作用域中，只有函数fn当执行函数的时候
+            会再当前作用域中查找变量foo，如果再当前作用域查找不到，会沿着作用域链向上查找，此时会查找到最外界的window中有变量foo,输出
+        */
+        getFoo();//此时会输出外界的变量
+    </script>
+</body>
+</html>

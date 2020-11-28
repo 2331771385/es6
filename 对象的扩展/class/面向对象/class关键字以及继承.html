@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+        对比es5与es6的创建实例对象以及类的方法
+        使用class定义的类必须使用new关键字调用，如果只是单纯的调用类的名称，就会报错
+        这是class类与普通的函数的一个主要区别
+        class类中只有静态方法，没有静态属性，如果想要定义静态属性，就在类的外面定义
+        Person.hobby=''这样就定义了一个静态属性
+        如果想要在类里面定义静态属性，还可以在类里面定义属性的时候添加上static关键字
+        */
+       //es6中定义类以及构造函数
+       class Person{
+           //这个就相当于es5中的构造函数
+           constructor(name,age){
+               this.name=name;
+               this.age=age;
+           }
+           //这个方法就相当于es5中在原型链中定义的方法
+           getName(){
+               console.log(this.name);
+           }
+
+           //在类方法前面加上一个关键字static，就表明该方法是一个静态方法，如果该方法中包含this关键字，表明this指向的是类不是实例对象
+           static sayHello(){
+               console.log('hello');
+           }
+       }
+
+       Person.sayHello();//静态方法直接通过类型来调用
+       let p1=new Person('nym',23);
+       p1.getName();
+
+       //通过实例对象调用静态方法
+       //p1.sayHello();//报错，提示该方法不存在
+
+       
+       console.log(typeof Person);//function
+       console.log(Person===Person.prototype.constructor);//true
+
+       /*Object.getOwnPropertyDescriptor(obj,name):第一个参数是对象，第二个参数是对象中的属性
+       得到的是一个对象，这个队形描述了这个属性该有的操作
+       其中enumerate为false，说明使用class定义的类的方法都是不可枚举的，都不是使用Object.keys()遍历
+       */
+       var des=Object.getOwnPropertyDescriptor(Person.prototype,"getName");
+       var arr=[];
+       arr=Object.keys(Person);//[]说明不可枚举
+
+       arr=Object.getOwnPropertyNames(Person)//可以遍历出属性值
+       console.log(arr);
+       console.log(des);
+    </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            proxy；代理，换句话说就是在目标对象前设置了一层拦截器，外界对该目标对象的访问都必须先通过这层拦截
+            因此proxy提供了一种机制可以对外界的访问进行过滤和改写
+            let proxy=new Proxy(target,handler);这样就创建了一个proxy的实例对象
+            对目标对象target进行拦截，handler是指定的拦截操作
+            外界访问target对象的属性的时候，会先执行这个拦截操作,第二个参数也是一个匿名对象
+            如果对象的属性是不可配置的或者不可写的，那么proxy不能对该对象进行访问，否则会报错
+        */
+        let obj={
+            name:'nym'
+        }
+        let proxy=new Proxy(obj,{
+            get:function(target,propKey){
+                // console.log(target,propKey);//{name: "nym"} "name",可以看出，target代表的就是拦截的对象，propKey就是读取的对象中的属性
+                if (propKey in target) {
+                    return target[propKey];
+                }else{
+                    throw new TypeError(`此${propKey}属性不在该对象上`)
+                    // return `此${propKey}属性不在该对象上`
+                }
+            }
+        })
+        console.log(proxy.name);//nym
+        // console.log(proxy.age);//抛出一个错误异常
+        // console.warn(proxy.age);//给出警告信息，此age属性不在该对象上
+
+
+        /*
+            使用get拦截行为也可以实现继承
+            let obj1=Object.create(proxy);使用Object.create()将proxy作为obj1对象的原型
+            在对象obj1中不存在name属性，但是使用js的原型链原理，可以找到原型对象proxy中存在name属性
+            所以obj1页能够拿到该属性
+        */
+        let obj1=Object.create(proxy);
+        console.log(obj1.name);//nym
+        
+
+
+        /*
+            可以创建dom节点的模板,对空对象进行拦截
+        */
+        let dom=new Proxy({},{
+            get:function(target,propKey){
+                return function (arrt={},...children) {
+                    //先创建一个标签
+                    let div=document.createElement(propKey);
+                    //向标签中添加属性
+                    for (const item of Object.keys(arrt)) {
+                        div.setAttribute(item,arrt[item])
+                    }
+                    //向标签里面添加内容
+                    for (const item of children) {
+                        let text=item;
+                        if (typeof text ==='string') {
+                             //创建文本标签，将该文本标签添加到div标签中
+                             text=document.createTextNode(text);
+                            
+                        }
+                        div.appendChild(text);
+                    } 
+                    return div;
+                }
+            }
+        })
+
+        const div=dom.div({id:'myDiv',class:'myClass'},
+            'hello world',
+            'I am like',
+            dom.a({href:'www.baidu.com'},'mark')
+        );
+        document.body.appendChild(div)
+    </script>
+</body>
+</html>

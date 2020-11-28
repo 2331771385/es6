@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            数组去重：
+            1.使用set数据结构
+        */
+        let arr=[1,1,2,3,4,2,1,'1'];
+
+        /*
+            使用es6的set数据结构
+            在set中，数字1和字符1被认为ieshi不同的字符
+        */
+        console.log(setArr(arr));
+        function setArr(arr) {
+            return set=new Set(arr);    
+        }
+
+        /*
+            使用数组的reduce方法结合includes方法
+        */
+        console.log(reduceArr(arr));
+        function reduceArr(arr) {
+            return arr.reduce((pre,cur)=>{
+                return pre.includes(cur) ? pre : [...pre,cur]
+            },[]);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            使用Object.getPrototypeOf(实例对象)可以获取该原型对象里面的数据
+        */
+        function Person(name) {
+            this.name=name;
+        }
+        Person.prototype.sayName=function(){
+            console.log(this.name);
+        }
+        Person.prototype.sayHello=function(){
+            console.log('hello');
+        }
+        var per=new Person('nym');
+        console.log(Object.getPrototypeOf(per));
+        console.log(Object.getPrototypeOf(per).constructor);
+    </script>
+</body>
+</html>

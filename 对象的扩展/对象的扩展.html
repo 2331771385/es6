@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+        * 在es6中有5中方法可以遍历对象的属性，其中前3中是经常用到的
+        1.for ....in：可以遍历对象自身的和可以继承的属性名
+        2.Object.getOwnPropertyNames(obj):参数是对象，得到的是一个数组，数组中是对象的属性名
+        3.Object.keys(obj):参数是一个对象，返回的是一个数组，数组中是对象的属性名称
+        */
+        //第一种方法
+        let obj={name:'nym',age:23,hobby:'singing'};
+        for (const index in obj) {
+            console.log(index);
+        }
+
+        //第二种方法
+        var arr=Object.getOwnPropertyNames(obj);
+        console.log(arr);
+
+        //第三种方法
+        let arrList=Object.keys(obj);
+        console.log(arrList);
+    </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            数组扁平化就是将多维数组转换为一维数组
+            思路：遍历数组中的每一项
+            判断当前项是否是数组
+            如果不是数组，就将该项添加到新数组中
+            如果是数组就进行迭代
+            直到遍历完成，返回新数组
+        */
+        var arr=[1,2,3,[4,5,'hello'],9,[true,'23']];
+        
+        /*
+            第一种方法：迭代+数组遍历
+        */
+        console.log(recursion(arr));
+        function recursion(arr) {
+            let newArray=[];//声明一个新数组用于存放元素
+            for(let i=0;i<arr.length;i++){
+                //判断当前项是否是数组
+                if (Array.isArray(arr[i])) {
+                    //是数组。就进行迭代
+                    newArray=newArray.concat(recursion(arr[i]))
+                }else{
+                    newArray.push(arr[i]);
+                }
+            }
+            return newArray;        
+        }
+
+
+        /*
+            第二种方法，使用数组的reduce：既可以统计每个元素出现的次数
+            也可以将多维数组转换为一维数组
+            在第一趟遍历的时候，pre为声明的[],cur为当前数组中的第一个元素
+            第一个return返回的是最后的结果
+            第二个return返回的当前这一趟最后的结果
+        */
+        console.log(reduceArr(arr));
+        function reduceArr(arr) {
+           return arr.reduce((pre,cur)=>{
+               return Array.isArray(cur) ? pre.concat(cur):pre.concat(cur) 
+            },[])//[]在这里相当于声明了一个新数组
+        }
+
+
+        /*
+        不使用迭代，直接遍历
+        */
+        console.log(notReduce(arr));
+        function notReduce(arr){
+            var newArray=[];
+            for(let i=0;i<arr.length;i++){
+                if (Array.isArray(arr[i])) {
+                    newArray=newArray.concat(arr[i])
+                }else{
+                    newArray.push(arr[i])
+                }
+            }
+            return newArray;
+        }
+
+
+        /*
+            第四种：使用es6的flat封装好的扁平化的方法
+            例如，实现es6的扁平化的方法可以上面的前三中
+        */
+        console.log(arr.flat());
+    </script>
+</body>
+</html>

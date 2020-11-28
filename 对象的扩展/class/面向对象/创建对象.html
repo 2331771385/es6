@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+        1.使用字面量创建对象,person队形定义了三个属性和一个方法
+        在这个方法中调用了对象的属性
+        */
+       var person={
+           name:'nym',
+           age:20,
+           sayHello(){
+               console.log(this.name);
+           }
+       }
+       person.sayHello();//nym
+       /*
+       可以使用数据属性对对象的属性进行操作
+       Object.defineProperty(person,name,{})三个参数，第一个参数是属性所在的对象，第二个参数是属性名，第三个属性是一个对象
+       对属性name定义了不可写属性，就不能在修改该属性的值
+       第三个参数对象所包含的意义：
+       configurable：是否可以使用delete删除属性，是否可以修改属性的特性
+        enumerable：是否可以枚举，是否可以使用for ...in遍历属性名
+        writable:是否可以写入
+        使用字面量创建的对象的属性，configurable，enumerable，writable都是false
+       */
+       Object.defineProperty(person,name,{
+            configurable:false,//当属性定义了false之后，就不能在对这个属性进行修改，将其修改为true
+            enumerable:false,//当该属性为true的时候，可以使用for..in循环遍历
+            writable:false,//说明这个属性只能读，不可写入
+            value:'11'
+       });
+       console.log(person.name);
+
+       /*
+       可以使用Object.defineProperties()定义多个属性
+       这个方法含有两个参数，第一个参数是对象
+       第二个参数是第一个参数对象要添加或者修改的属性
+       */
+       let book={};
+       Object.defineProperties(book,{
+           name:{
+               value:'js高级程序设计',
+               writable:true,
+           },
+           edition:{
+               value:'2005',
+               enumerable:false
+           },
+           year:{
+               value:2004,
+           },
+           _year:{
+               get:function (params) {
+                   console.log(this._year);
+               },
+               set:function(newVal){
+                    if (newVal>2004) {
+                        this._year=newVal
+                    }
+               }
+           }
+       })
+       /*
+       当访问的属性是数据属性的时候，会包含writable，enumerable，configurable，value
+       当访问的属性是访问器属性的时候，会包含get,set,enumerable，configurable
+       */
+       //Object.getOwnPropertyDescriptor可以得到某一个属性的描述对象，第一个参数是属性所在的对象，第二个参数是属性名，注意，属性名要加字符串
+       let arr=Object.getOwnPropertyDescriptor(book,'name');
+       console.log(arr);//value: "js高级程序设计", writable: true, enumerable: false, configurable: false
+       //访问器属性
+       let arrList=Object.getOwnPropertyDescriptor(book,'_year');
+       console.log(arrList);//enumerable: false, configurable: false, get: ƒ, set: ƒ
+    </script>
+</body>
+</html>

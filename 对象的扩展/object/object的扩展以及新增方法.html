@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+         /*
+            es6允许直接将变量或者函数作为对象的属性写入到大括号中
+         */
+         var foo='bar';
+         var bar={foo};//   =bar={foo:'bar'}
+         
+         let obj={
+             ['a'+'bc']:'123',//属性名可以使用表达式的形式
+         }
+         console.log(obj.abc);
+         console.log(obj['abc']);
+
+         function fn(x,y) {
+            //  return {x,y};//{x:x,y:y}
+            return {x:x,y:y}
+         }
+         console.log(fn(1,2));
+
+         let lastName='last name';
+         let obj1={
+            [lastName]:'name',
+            method(){  //method:function(){}的缩写
+                console.log(this[lastName]);
+            },
+            ['h'+'ello'](){//表达式还可以定义方法名
+                console.log('hello');
+            },
+         }
+         console.log(obj1[lastName]);
+         obj1.method();
+         obj1.hello()
+
+
+        /*
+            属性名表达式如果是一个对象，默认情况下会将该对象转换为字符串[object,object]的格式
+            因为key1和key2得到的都是[object,object]的形式，所以key2会把key1覆盖掉，最后得到的解构就是key2的结果
+        */
+        let key1={a:'1'};
+        let key2={b:'2'};
+        let o={
+            [key1]:'ht',
+            [key2]:'hy'
+        }
+         console.log(o);
+
+
+
+
+         /*
+         方法的name属性返回的是方法名
+         */
+         console.log(obj1.hello.name);//hello
+
+        /*
+            使用取值和存值函数时，与普通函数存在不同
+            name属性不在该方法上，而是在该方法属性的描述对象的get和set属性中
+            先获取该方法的描述对象
+            bind方法创建的函数返回值是函数名前面加上bound
+            bind函数的作用：不会立即执行函数，而是会返回一个函数。调用返回的函数的时候才会执行bind函数
+                            会改变函数中this的指向
+            与call,apply的不同就是bind不会立即执行函数
+            call,apply的作用一样，（1）立即执行调用的函数（2）改变this指向问题
+            不同点就是：第二个参数的形式不同，call方法的第一个参数是以参数列表的形式展示参数
+            而apply的第二个参数是一个数组的形式
+        */
+         let obj3={
+             get fn(){},
+             set fn(v){}
+         }
+         let descriptor=Object.getOwnPropertyDescriptor(obj3,'fn');
+         console.log(descriptor.get.name);//get fn
+         console.log(descriptor.set.name);//set fn
+         console.log((new Function()).name);//使用function构造函数创建的函数返回值是anonymous
+         function something(){
+
+         };
+         console.log(something.bind().name);//bound something
+
+
+         /*
+         如果对象的方法是一个Symbol值，那么方法的name属性返回的是symbol的描述
+         */
+         let hello=Symbol('我是hello函数');
+         let world=Symbol();//没有任何描述信息
+         let obj4={
+             [hello](){},
+             [world](){}
+         }
+         console.log(obj4[hello].name);//[我是hello函数]
+         console.log(obj4[world].name);//因为这个方法没有描述信息，所以返回的是空值
+    </script>
+</body>
+</html>

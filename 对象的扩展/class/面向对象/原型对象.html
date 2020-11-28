@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+        原型对象与构造函数以及实例对象之间的关系
+
+        */
+        function Person() {
+        }
+        Person.prototype.name='nym';
+        Person.prototype.sayHello=function(){
+            console.log(this.name);
+        }
+        var per=new Person();
+        per.sayHello();//可以输出属性值nym
+        console.log(Person.prototype);
+        console.log(per.__proto__);
+
+        //可以通过isPrototypeOf()来确定对象之间是否存在某种关系
+        //返回true，就说明per的属性指向的就是构造函数的原型对象
+        console.log(Person.prototype.isPrototypeOf(per));//true
+        
+
+        //原型链的出现主要是应用于搜索机制，当搜索某一个属性的时候，会先在实例对象上查找
+        //如果实例对象查找不到，就会在实例对象所在的原型对象上查找，如果原型对象上有这个属性，就返回该属性，否则继续沿着原型链查找
+        
+
+        //使用hasOwnPrototype()可以检测该属性是属于哪个对象，只有当属性属于实例对象的时候才会返回true
+        console.log(per.name);//nym
+        console.log(per.hasOwnProperty('name'));//false,因为name属性存在于构造函数中，不存在于实例对象中，因此返回false
+        per.name='lwl';
+        console.log(per.name);
+        console.log(per.hasOwnProperty('name'));//true,因为在实例对象上含有属性name，就返回true
+        //使用delete可以删除实例对象中的某些属性
+
+
+
+
+
+        //可以使用for..in循环来遍历得到实例对象的所有属性，
+        //也可以使用Object.keys()来得到实例对象和构造函数中所有可以枚举的属性
+        //使用Object.getOwnPropertyNames()可以得到所有的属性，包括不可枚举的属性
+        function User() {
+            
+        }; 
+        User.prototype.name='n';
+        User.prototype.age=20;
+        User.prototype.sayHello=function(){
+            console.log(this.name);
+        }
+        var user=new User();
+        user.name='y';
+        let attributes=Object.keys(User.prototype);
+        console.log(attributes);//[name,age,sayHello]
+        console.log(Object.keys(user));//[name]
+        //使用Object.getOwnPropertyNames()可以得到不可枚举的属性constructor属性
+        console.log(Object.getOwnPropertyNames(User.prototype));//[constructor,name,age,sayHello]
+    </script>
+</body>
+</html>

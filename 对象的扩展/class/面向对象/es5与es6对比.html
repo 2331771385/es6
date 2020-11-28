@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+        在es5中，创建对象有3中方式：1.字面量  let obj={} 2.通过new Object()  3.通过构造函数
+        在构造函数中，成员分为静态成员和实例成员
+        实例成员都是通过this关键字创建的，并且实例成员只能通过实例方法调用
+        在下面的例子中，实例成员是name，age
+        */
+        function Person(name,age) {
+            this.name=name;
+            this.age=age;
+        }
+
+        var per=new Person('ldh',18);
+        //静态成员是在构造函数上直接添加的
+        Person.a='111';
+        console.log(Person.a);//直接通过构造函数访问，不能通过实例对象访问
+
+        /*
+        在构造函数的原型链上添加方法，是为了避免内存的浪费
+        原型链上的方法可以被所有的实例对象共享
+
+        每一个实例对象都有一个__proto__属性，这个属性指向构造函数的prototype对象
+        当把一些公用的方法添加到原型链上的时候，实例对象会首先在对象中查找
+        如果没有查到，就会调用__proto__在原型链上进行查找
+        */
+        console.log(per);
+        console.log(per.__proto__===Person.prototype);//true
+
+
+
+        /*
+        es5中5中继承方法：
+        1.使用原型链继承prototype
+            缺点：所有的方法都添加在原型链上，当添加的方法过多的时候，就会造成内存的浪费
+        2.使用原型链，将所有的方法都添加到构造函数的原型链对象上
+            注意：这样会节省很多空间，但是需要手动添加该原型链的构造函数
+        3.使用Object.cerate(proto):这个方法会创建一个新对象，参数proto会指出这个新对象的this指向
+        */
+        //构造函数只是用来初始化参数，并返回实例对象
+        // function Animal(name,age) {
+        //     this.name=name;
+        //     this.age=age;
+        // }
+        //1.在原型链上添加方法，所有的实例对象都可以共享
+        // Animal.prototype.say=function(){
+        //     //使用模板字符串，
+        //     console.log(`我的名字是${this.name},今年${this.age}岁！`);
+        // }
+        // var dog=new Animal('dog',1);
+        // dog.say();
+
+        //2.使用Animal.prototype={},手动添加该原型链的构造函数
+        // Animal.prototype={
+        //     constructor:Animal,
+        //     say:function(){console.log(`我的名字是${this.name},今年${this.age}岁！`);},
+        //     show:function(){console.log(this.name)}
+        // }
+        // var dog=new Animal('dog',1);
+        // dog.say();
+        // dog.show();
+        // console.log(Animal.prototype.constructor);//不是原来的构造函数
+
+
+
+        //3.使用Object.create(),
+        //第二个参数是属性描述对象，只添加value值，就说明这个属性不可枚举，不可写，不可配置
+        //第二个参数添加的是创建的对象本身的属性，不是继承的对象的属性
+        /*
+            Object.create()创建一个对象，如果创建的是一个空对象，那么这个对象下面不含有原型属性__proto__
+            当使用构造函数new Object()或者对象字面量来创建，对象下面含有原型属性
+        */
+        // let cat=Object.create(Animal,{name:{value:'cat'},age:{value:2}});
+        // console.log(cat.name);
+        // console.log(cat.age);
+        // console.log(cat.prototype);
+
+
+        //4.使用call含有改变this指向问题,这个方法使用两个构造函数极其相似的情况
+        /*
+        call()与apply()区别：call()第一个参数是可以改变this指向，第二个参数是一个参数列表
+        apply()的作用与call()的作用一样，只是第二个参数不一样，apply的第二个参数是一个数组
+
+        call()方法使用一个指定的this和一个或多个参数来调用这个方法
+        在子构造函数中，可以使用call方法调用父构造函数，
+        call函数的第一个参数没有指定，默认情况下指向全局
+        */
+        function Animal(name,age) {
+            this.name=name;
+            this.age=age;
+        }
+
+        function Person(name,age,sex){
+            // Animal.call(this,name,age);
+            Animal.apply(this,[name,age])
+            this.sex=sex;
+        }
+        //创建实例对象
+        var per=new Person('nym',20,'女');
+        console.log(`${per.name},你好，今年${per.age}岁，是一个${per.sex}生`);
+
+
+
+        //使用Object.assign();可以实现原型属性的继承,可以看成是一种复制，就是将第二个参数的属性复制到第一个参数中
+        let obj={a:'1',b:'2',c:'3'};
+        function assign() {
+            this.color='red';
+        }
+        Object.assign(assign,obj);
+        let ass=new assign();
+        //color属性在实例上，其他的属性在原型上
+        console.log(ass);
+        console.log(Object.getPrototypeOf(ass));//得到ass的原型
+
+
+        //5.使用拷贝式的继承方式,对象可以使用for..in
+        let source={name:'nym',age:23,sex:'女'};
+        let target={};
+        for (const key in source) {
+            target[key]=source[key];
+        }
+        console.log(target);
+        //也可以直接使用扩展运算符
+        let target1={...source};
+        console.log(target1);
+    </script>
+</body>
+</html>

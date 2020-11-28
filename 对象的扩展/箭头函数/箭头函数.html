@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            再箭头函数中有一些特殊的存在1，this指向问题  2.arguments问题
+            this的指向问题：箭头函数体内的this对象就是定义时所在的函数对象，而不是执行时所在的函数对象
+            箭头函数中不是没有提供this的绑定机制，而是再箭头函数中就没有this,因为这个原因，箭头函数不能用做构造函数
+            再es5中，可以使用call,apply,bind手动的改变this的指向，但是再箭头函数中，this的指向是固定的，
+            箭头函数中的this始终指向的都是函数定义时的对象，而不是函数执行时的对象
+            例如settinmeout函数，使用箭头函数的时候，当前函数生效的时候是父函数生成的时候，而不是执行的时候
+        */
+        let obj={
+            id:1,
+            getId:function(){
+                console.log(this);//此时的this指向的是obj对象
+                console.log(this.id);//1
+            },
+            getVal:function(){
+                /*
+                    getVal生效的时候
+                    setTimeout定义的时候this指向的obj函数，所以箭头函数中的this指向的就是箭头函数
+                */
+                setTimeout(()=>{
+                    /*
+                        此时的this指向的是函数定义是的this,再函数定义时，函数的作用域是obj对象，
+                        因此此时的this指的是对象obj
+                    */
+                    console.log(this);
+                    console.log(this.id);
+                },1000)
+            },
+            /*
+                setTimeout定义的时候与say平级，
+            */
+            say:setTimeout(()=>{
+                console.log(this);
+                console.log(this.id);
+            },1000)
+        }
+        // obj.getId();
+        // obj.getVal()
+        obj.say;//此时的this指向的是window对象，this.id指向的是window中的id，因为找不到这个属性，所以输出结果为undefined
+
+
+        /*
+            普通函数中，不管函数嵌套多少层，setTimeout,setInterVal中的this指向的都是window
+        */
+        function getTime() {
+            function getSetTime() {
+                setTimeout(function(){
+                    console.log(this);
+                },1000)
+            };
+            getSetTime()
+        }
+        getTime();
+
+
+
+
+        /*
+            箭头函数与普通函数的区别
+        */
+        function  Timer() {
+            this.x=0;
+            this.y=0;
+            setInterval(()=>{
+                this.x++;//this指向setInterval定义的时候，this与当前函数timer绑定再一起，
+            },1000);
+
+            setInterval(function(){
+                this.y++;//此时的this再函数执行的时候，执行的时候this指向window
+            },1000)
+        }
+        let timer=new Timer();
+        setTimeout(()=>console.log(timer.x),4100);
+        setTimeout(()=>console.log(timer.y),4100)
+    </script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            set()：用于拦截对象属性的设置
+        */
+        let target={
+            name:'nym',
+            age:20
+        }
+        let handler={
+            set:function(terget,key,value){
+                if (key==='age') {
+                    //如果设置的属性是age，则判断是不是符合要求，若果不符合要求，就抛出异常
+                    if (value>100) {
+                        throw new RangeError(`该属性${key}范围为100之内`);
+                    }
+                    if (typeof value !=='number') {
+                        throw new TypeError(`此属性${key}的值必须是数值`)
+                    }
+                }
+                return Reflect.set(target,key,value);
+            },
+            get:function(target,key){
+                if (key in target) {
+                    return target[key]
+                }
+                throw new TypeError('出错了')
+            }
+        }
+        let proxy=new Proxy(target,handler);
+        proxy.age=35;
+        console.log(proxy.age);//35
+        console.log(proxy.name);//nym
+        
+
+
+        /*
+            代理：apply()
+            target1():代理目标对象
+            handler1():代理目标所要执行的操作
+
+        */
+        let target1=function(...argu){
+            return [...argu].reduce((pre,cur)=>{
+                return pre+=cur;
+            },0)
+        };
+        let handler1={
+            apply:function(target1,cxt,argu){
+                // console.log(argu);//[1,2,3,4]
+                return Reflect.apply(...arguments)*2;
+            }
+        }
+        let proxy1=new Proxy(target1,handler1);
+        console.log(proxy1(1,2,3,4));
+        console.log(proxy1(3,4,5));
+
+
+        /*
+            has():拦截in操作符的操作，判断对象是否具有某个属性
+            for...in中的in操作符不起作用
+        */
+        let target2={
+            _prop:'foo',
+            prop:'foo'
+        };
+        let handler2={
+            has:function(target2,key){
+                if (key[0]==='_') {
+                    return false;
+                }
+                return key in target2;
+            }
+        }
+        let proxy2=new Proxy(target2,handler2);
+        console.log('_prop' in proxy2);//false,屏蔽了in操作符
+        console.log('prop' in proxy2);//true;
+        
+
+
+        /*
+            construct():拦截new命令，返回值必须是一个对象，否则会报错
+            每个方法都要根据实际情况来，构造函数是定义在类中的
+        */
+        let target3=function(){};
+        let handler3={
+            construct:function(target3,args,newTarget){
+                return {value:args[0]*10};
+            }
+        }
+        let proxy3=new Proxy(target3,handler3);
+        console.log((new proxy3(1,2)).value);//10
+
+
+
+        /*
+            deleteProperty():拦截delete操作，返回的是一个布尔值
+            如果这个方法抛出错误或异常或这返回值为false,则当前属性就不会被delete删除
+        */
+        let target4={_prop:'foo',prop:'foo'};
+        // console.log(Object.getOwnPropertyDescriptors(target4));
+        let handler4={
+            deleteProperty:function(target4,key){
+                if (key[0]==='_') {
+                    throw new TypeError(`出错了!`)
+                }
+                return Reflect.deleteProperty(target4,key);//调用Reflect.deleteProperty(target4,key)执行删除操作
+            }
+        }
+        let proxy4=new Proxy(target4,handler4);
+        // console.log(delete proxy4._prop);//抛出异常，则这个属性就不能被delete删除
+        console.log(delete proxy4.prop);//true;
+        console.log(proxy4);
+        console.log(target4);
+
+
+        /*
+            defineProperty():拦截Object.defineProperty()操作
+        */
+        let target5={};
+        let handler5={
+            defineProperty:function(target5,key,des){
+                return Reflect.defineProperty(target5,key,des)
+            }
+        }
+        let proxy5=new Proxy(target5,handler5);
+        console.log(proxy5);
+        proxy5.foo='bar';
+        console.log(proxy5);//添加成功，如果返回false,就代表添加不成功
+    </script>
+</body>
+</html>

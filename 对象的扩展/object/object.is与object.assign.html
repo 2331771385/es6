@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+        本文主要是对object.is与object.assign()的一些操作
+        object.is()用于比较两个值是否相等
+        与绝对相等===的差别主要体现在以下两个方面
+        1.NaNd等于其自身
+        2.+0与-0是不等的
+        返回的是一个布尔值
+        */
+        console.log(Object.is(+0,-0));//false
+        console.log(Object.is(NaN,NaN));//true
+        console.log(Object.is({},{}));//false,这个方法比较是内存中的地址，显然两个对象创建的内存地址是不一样的
+        /*
+            在es5中可以对这个方法进行部署
+            Object.defineProperty()接受3个参数，分别是属性所在的对象，属性名以及属性的描述对象
+        */
+        Object.defineProperty(Object,'is',{
+            value:function(x,y){
+                if (x===y) {
+                    return x!==0 || 1/x===1/y;//排除+0与-0
+                }
+                return x!==x&&y!==y;//排除NaN的情况
+            },
+            configurable:true,//可以使用delete对属性进行删除
+            writable:true,//可以修改属性的值
+            enumerable:true//该属性是可枚举的，可以使用一系列的方法进行遍历
+        })
+
+
+
+        /*
+            object.assign()方法：对当前对象所有可枚举的属性进行复制，这是一种浅拷贝模式
+            用于将源目标的所有可枚举的属性复制到目标对象中
+            这个方法的参数不少于2个，第一个参数是目标对象，以后的参数都是源对象，并且这些参数必须是对象形式
+            如果只有一个参数，这个方法会返回该参数本身
+            如果参数不是对象，会先将其转换为对象
+            因为undefined与null无法转换为对象，所以如果将这两个数作为参数，会出现错误
+            如果非对象参数是源对象而不是目标对象，则会先进行转换，如果有undefined或者null则不会报错，直接跳过
+        */
+        let target={a:1};
+        let source1={b:2};
+        let source2={c:3};
+        Object.assign(target,source1,source2)
+        console.log(target);//会将source1和source2的属性复制到目标对象中，如果有重名属性，后者会覆盖前者
+        let target1={c:3};
+        console.log(Object.assign(target1)===target1);//true
+        console.log(typeof Object.assign(2));//object
+        console.log(Object.assign(target1,undefined)===target1);//true,回跳过undefined，因为他是源对象的非对象属性
+        console.log(Object.assign(target1,null)===target1);//true,原理与undefined一样，回跳过这个属性
+
+
+        /*
+            遍历对象属性的方法如下：（es5的3个以及es6的一个）
+            1.for...in:只遍历对象自身以及继承的可枚举的属性
+            2.Object.keys():只遍历对象自身的可枚举的属性
+            3.JSON。stringify():只串行化对象自身可枚举的属性
+            4.Object.assign():只复制源对象自身可枚举的属性
+        */
+        console.log(Object.getOwnPropertyDescriptor(Object.prototype,'toString').enumerable);//false说明这个属性不能被遍历到
+        console.log(Object.getOwnPropertyDescriptor([],'length').enumerable);//false,数组的length属性也是不可枚举的 
+    </script>
+</body>
+</html>

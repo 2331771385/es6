@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            js中的对象都是以键值对的形式出现，但是对象中的属性名只能是字符串，如果传入一个非字符串的值，系统会自动转换为字符串 
+            这会有很大的不便，map结构也是以键值对的形式存在，但是map中的键可以是任意形式的，也就是说Object提供了字符串-值的形式
+            而map结构中提供的值-值的形式
+            map中的方法分为icaozuo方法和遍历方法：
+                1.操作方法：
+                    set(k,v):可以使用set方法向map结构中添加成员，返回的还是map结构本身，因此可以采用链式方式向map结构中添加多个成员
+                    get(k);使用get方法获取指定键名对应的键值
+                    delete(k);使用delete方法删除map结构中的某一个属性
+                    clear():使用clear清除map结构中的所有成员
+                    has(k);返回的是布尔值，用于判断map结构中是否含有该键名
+                2.遍历方法：
+                    keys();返回的是一个数组，map结构中的键名
+                    values():返回的是键值的数组
+                    entries():返回的是键值对的数组
+                    forEach():map结构中的每一个成员都会遍历的回调函数，没有返回值
+            如果map的键是一个简单数据类型，则只要严格相等，就认为是一样的
+            在map结构中-0与+0是相等的，NaN与NaN是严格相等的
+        */
+        var map=new Map()
+        map.set('name','nym')
+        map.set('age',16)
+        map.set('say','hello')
+    //    console.log(Map.prototype);
+        console.log(map);
+        console.log(map.get('name'));//nym
+        let obj={p:'hello world'};
+        map.set(obj,'content');
+        console.log(map.get(obj));//content
+        console.log(map.has('name'));//true
+        console.log(map.delete('name'));//true,代表删除成功
+        console.log(map.has('name'));//false,因为删除成功，该map结构中不存在这个属性，所以在判断属性是否存在的时候，就会返回false
+        console.log(map.clear());
+        console.log(map.size);//0,使用clear()对属性进行删除，此时map结构中不存在任何成员，此时使用size会报错
+
+        //也可以向map中传入数组
+        let map1=new Map([['name','zs'],['title','wzh']]);
+        console.log(map1);//返回的是map结构{"name" => "zs", "title" => "wzh"}
+        //上面的操作其实与下面的操作类似
+        let arr=[['name','zs'],['title','wzh']];
+        let map2=new Map();
+        arr.forEach((k,v)=>{
+            map2.set(k,v)
+        })
+        console.log(map2);
+
+        //map中的键是和内存地址绑在一起的
+        let map5=new Map();
+        map5.set(['1'],555);
+        console.log(map.get(['1']));//undefined,说明设置的['1']和取到的['1']是不同的地址
+        map5.set(-0,'hlo');
+        console.log(map5.get(+0));//hlo,说明-0与+0是相等的
+
+
+
+        /*
+            map中的遍历方法
+
+        */
+       let mapArr=new Map([['name','nym'],['age',35],['hobby','singing,dance'],[{p:'hello'},'content']]);
+       for (const item of mapArr.keys()) {
+           console.log(item);//name,age,hobby,{p:'hello'}
+       }
+       for (const item of mapArr.values()) {
+           console.log(item);//nym,35,singing,dance,content
+       }
+       for (const item of mapArr.entries()) {
+           console.log(item);//返回的是键值对
+       }
+       for (const item of mapArr) {
+           console.log(item);//返回的结果与mapArr.entries()返回的结构一致
+       }
+       console.log(Map.prototype[Symbol.iterator]);//entries
+       console.log(Map.prototype[Symbol.iterator]===Map.prototype.entries);//true,说明Map的默认遍历器的方法是entries()
+
+
+
+
+        /*
+            1.数组转换为map结构，直接将数组元素作为map结构的参数
+            2.将map结构转换为数组，使用扩展运算符
+            3.将map转换为对象
+            4.将对象转换为map结构
+        */
+        let mapTarr=new Map([['name','lwl'],['age',16]]);
+        console.log(mapTarr);//返回的是map结构的数据 Map(2) {"name" => "lwl", "age" => 16}
+        console.log([...mapTarr]);
+        
+        //声明一个对象
+        let obj1={};
+        for (const item of mapTarr.keys()) {
+            obj1[item]=mapTarr.get(item)
+        }
+        console.log(obj1);//{name: "lwl", age: 16}
+
+
+        let object={
+            id:'1',
+            name:'nym',
+            say:function(){}
+        }
+
+        //转换为map结构，先声明一个map数据结构
+        let objTmap=new Map();
+        for (const item of Object.keys(object)) {
+            objTmap.set(item,object[item])
+        }
+        console.log(objTmap);//{"id" => "1", "name" => "nym", "say" => ƒ}
+    </script>
+</body>
+</html>
