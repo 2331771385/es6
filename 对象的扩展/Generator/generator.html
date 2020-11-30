@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            generator函数可以看作是一个状态机，内部封装了多个状态
+            generator函数生成一个Itorator对象，所以调用generator函数不会立即执行，也不会返回函数执行的结果
+            调用迭代器的next()方法才是真正的执行generatir函数内部的状态
+            每一个yeild封装了一个状态，调用一个next执行一个yeild
+            可以为next传递参数，参数默认为上一次yield的返回值
+            因此，第一个next传递的参数没有任何作用，仅仅起到了调用迭代器的作用
+            generator函数的特点：1）在function关键字和函数名之间有一个*号，这代表是一个generator函数
+            2）函数内部使用yeild关键字对多个状态进行暂停
+            每一个yield的返回值都是一个带有value和done属性的对象
+            其中，value返回的是yield表达式后面的值
+            done返回的是一个布尔值，其中，若为false,则代表遍历未结束，否则，则认为遍历结束了
+        */
+        function* fn(){
+            yield 1;
+            yield 2;
+            yield 3;
+            return 4;
+        }
+        let f=fn();
+        // console.log(f);//并没有立即执行函数，而是返回了一个对象
+        console.log(f.next());//{value: 1, done: false}
+        console.log(f.next());//{value: 2, done: false}
+        console.log(f.next());//{value: 3, done: false}
+        console.log(f.next());//{value: 4, done: true}done返回值为true,则认为遍历结束，此时再使用next（）返回的value值为undefined
+        console.log(f.next());//{value: undefined, done: true}
+        
+
+
+
+        /*
+            yield表达式
+            遇到yield就会暂停执行下面的操作，并且会将yield后面的表达式返回
+            如果没有遇到新的yield，就会一直向下运行，直到最后return ,并将return后面的表达式作为返回值赋值给value
+            如果没有return语句，就一直执行到程序结束，返回给对象的value值为undefined
+            每一个函数只有一个return语句，但是可以有多个yield语句
+            yield语句要放在generator函数中，才有有作用，如果放在别的地方，则会报错
+        */
+        function* f1(){
+            console.log('函数执行了');
+        }
+        let it=f1();
+        setTimeout(()=>{
+            it.next();//在2秒之后会调用迭代器的next方法
+        },2000)
+
+
+        /*
+            yield表达式如果放在另一个表达式里面，则yield表达式需要使用（）圈起来，否则会报错
+        */
+        function* f2(){
+            console.log('hello'+(yield 123));
+        }
+        let ite=f2();
+        ite.next();
+        ite.next()
+    </script>
+</body>
+</html>
