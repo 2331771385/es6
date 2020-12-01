@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            我们都知道，使用JSON.parse(JSON.stringify)可以实现对象的深拷贝
+            但是使用这个方法会有一系列的问题
+            比如：当对象中含有函数类型或者日期类型时，使用这个方法拷贝出来的新对象中
+            （1）日期类型直接转换成了字符串
+            （2）函数类型直接没有了
+            （3）undefined、任意的函数以及symbol值，在拷贝过程中都没有了
+            （4）Date类型调用了toJSON()函数，直接转换成了string字符串
+            （5）NaN 和 Infinity 格式的数值及 null 都会被当做 null。
+            （6）对于对象之间的相互引用，使用这个方法则会直接报错。循环引用的对象
+
+            总结:当我们要拷贝的函数中包好以上几类的时候，不要使用该方法，可以使用递归的方法进行拷贝
+        */
+    </script>
+</body>
+</html>

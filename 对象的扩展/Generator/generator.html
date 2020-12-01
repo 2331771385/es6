@@ -43,15 +43,15 @@
             如果没有遇到新的yield，就会一直向下运行，直到最后return ,并将return后面的表达式作为返回值赋值给value
             如果没有return语句，就一直执行到程序结束，返回给对象的value值为undefined
             每一个函数只有一个return语句，但是可以有多个yield语句
-            yield语句要放在generator函数中，才有有作用，如果放在别的地方，则会报错
+            yield语句要放在generator函数中，才会有作用，如果放在别的地方，则会报错
         */
-        function* f1(){
-            console.log('函数执行了');
-        }
-        let it=f1();
-        setTimeout(()=>{
-            it.next();//在2秒之后会调用迭代器的next方法
-        },2000)
+        // function* f1(){
+        //     console.log('函数执行了');
+        // }
+        // let it=f1();//返回迭代器对象
+        // setTimeout(()=>{
+        //     it.next();//在2秒之后会调用迭代器的next方法
+        // },2000)
 
 
         /*
@@ -61,8 +61,161 @@
             console.log('hello'+(yield 123));
         }
         let ite=f2();
-        ite.next();
-        ite.next()
+        console.log('-----------------------')
+        console.log(ite.next());//调用next函数返回的是yield之后的表达式
+        ite.next(' world');//传递参数，说明上一次yield返回值为参数，进行字符串的拼接，并且执行到下一次yield的位置
+
+
+
+
+        /*
+            与iterator接口有关的
+            任何一个对象的Symbol iterator方法 都是该对象默认的遍历器方法
+            例如，set结构的默认遍历器对象(Symbol iterator)就是values方法
+            map结构的默认遍历器方法（Symbol iterator）就是entries方法
+
+            js中的对象默认是没有遍历器接口的，也就是没有（Symbol iterator），但是generator函数返回的是一个遍历器
+            因此可以将generator函数赋值给对象的（Symbol iterator）属性
+            这样对象就具有遍历器接口
+        */
+        let obj={
+            name:'nym',
+            age:19
+        }
+        console.log(obj[Symbol.iterator]);//undefined,说明对象不具有遍历器接口
+        /*
+            将generator函数赋值给对象的遍历器接口，就能实现遍历器接口
+        */
+        obj[Symbol.iterator]=function* (){
+            yield 'hello';
+            yield 'world';
+        }
+        console.log(obj[Symbol.iterator]);//此时就具有了遍历器接口
+        let objIt=obj[Symbol.iterator]();
+        console.log(objIt.next());//{value: "hello", done: false}
+        console.log(objIt.next());//{value: "world", done: false}
+        console.log(objIt.next());//{value: undefined, done: true}此时done的返回值为true，说明遍历器结束
+        console.log([...obj]);//["hello", "world"]此时对象具有遍历器接口，能够使用赋值解构进行值的赋值
+
+
+        /*
+            next方法的参数
+            （1）如果next没有参数，则默认返回紧跟在yield其后的表达式
+            （2）如果next有参数，如果是第一次调用next方法，则默认参数没有作用，因为next参数代表的是上次yield的返回值
+                    因为第一次调用next，没有遇到yield,所以第一次调用yield只是单纯的启动遍历器函数
+            （3）如果不是第一次调用next，则next参数代表的是上一次yield返回的结果，接着执行到下一次遇到yield为止
+
+        */
+        function* nextIt(){
+            console.log('start');
+            let a=yield 'nym';
+            console.log(a);
+            let b=yield a;
+            console.log(b);
+        }
+        let nextIterator=nextIt();
+        console.log(nextIterator.next('wwwww'));//start,{value: "nym", done: false},先执行输出语句，然后执行到第一个yield
+        console.log(nextIterator.next('good'));//good,{value: "good", done: false},将good赋值给上一次yield的返回值a
+        console.log(nextIterator.next('day day'));//day day,{value: undefined, done: true}将变量赋值给b输出b，找下一个yield，此时没有，直到程序结束，返回的done的值为true,代表遍历结束
+
+        function* iterator(){
+            for(var i=0;true;i++){
+                var reset=yield i;
+                if (reset) {
+                    i=-1;
+                }
+            }
+        }
+        let g=iterator();//返回遍历器对象
+        console.log(g.next());//{value: 0, done: false},因为next方法为记住上一次执行的位置，下次调用的时候，会接着上次的位置执行
+        console.log(g.next());//{value: 1, done: false}
+        console.log(g.next(true));//{value: 0, done: false}带有参数，则说明上次yield的返回值为true,此时i=-1;通过循环的i++操作，i从-1变为0
+
+
+        /*
+            for ....of循环可以自动遍历generator函数的iterator对象，因此不需要使用遍历器的next方法
+            for...of方法与next方法的不同：next方法会返回return的值，而for...of方法不会遍历return的值
+            for...of内部调用的就是遍历器的next方法
+        */
+        function* forIt(){
+            yield 1;
+            yield 2;
+            yield 3;
+            yield 4;
+            return 5;
+        }
+        for (const item of forIt()) {
+            console.log(item);//1,2,3,4
+        }
+
+
+        /*
+            throw（）generator函数返回的遍历器对象都有一个throw方法，可以在函数体外抛出错误，在函数体内捕获异常
+        */
+         function* g1(){
+             try{
+                 yield 1;
+             }catch(e){
+                 console.log('内部捕获:'+e);
+             }
+         }
+         let i=g1();
+         console.log(i.next());//{value: 1, done: false}执行到yield
+         try{
+             /*
+                因为是generator函数内部抛出的错误，所以会先去函数内部找看有没有捕获异常的处理
+             */
+            i.throw('a');//内部捕获:a
+            /*
+                因为generator函数内部只有一个异常处理，所以上次执行完后就不会在执行上面的异常，会被下面的异常捕获到
+            */
+            i.throw('b');//外部捕获：b
+         }catch(e){
+             console.log('外部捕获：'+e);
+         }
+
+
+         /*
+            遍历器对象的throw与全局throw命令是不一样的，上面的错误都是使用generator函数的throw方法抛出的，所以会先被generator函数捕获
+            而全局throw命令只能被函数体外的catch捕获
+         */
+         function* g2(){
+             try{
+                 yield 2;
+             }catch(e){
+                 console.log('我是内部捕获的命令：'+e);
+             }
+         }
+         let throwIt=g2();
+         console.log(throwIt.next());//{value: 2, done: false}
+         try{
+             /*
+                外部的异常只捕获了一次，函数体外的catch语句捕获了第一次的异常a后，就不会再回来执行try语句后面的命令
+             */
+             throw new Error('a');
+             throw new Error('b');
+         }catch(e){
+             console.log('我是外部的异常：'+e);//我是外部的异常：Error: a
+         }
+
+
+         /*
+            generator函数内部设置try...catch块，那么遍历器的throw方法不会影像下一次遍历
+            另外，throw方法被捕获后，会附带执行一次yield命令
+         */
+         function* gen(){
+             try{
+                 yield console.log('a');
+             }catch(e){
+                 console.log('我是内部的变量:'+e);
+             }
+             yield console.log('b');
+             yield console.log('c');
+         }
+         let gen1=gen();
+         gen1.next();//a
+         gen1.throw();//我是内部的变量:undefined,b   内部设有try...catch块，异常被捕获后，会附带执行一次yield命令我是内部的变量:undefined
+         gen1.next();//c
     </script>
 </body>
 </html>

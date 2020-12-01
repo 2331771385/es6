@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            generetor函数生成的迭代器对象中都会有一个return函数
+            调用迭代器对象的return方法，会返回return参数的value值，并且迭代器遍历终止，返回的done为true
+            如果return方法没有返回值，那么返回的value值为undefined
+        */
+        function* f(){
+            yield 1;
+            yield 2;
+        }
+        let g=f();
+        console.log(g.next());//{value: 1, done: false}
+        console.log(g.return('foo'));//{value: "foo", done: true}
+
+        /*
+            如果在代码里面含有try...finally块，调用return方法后会执行finally代码快的语句
+            等到finally语句快执行完后，在返回return指定的值
+        */
+        function* f1(){
+            yield 'start';
+            try{
+                yield 'a';
+                yield 'b';
+            }finally{
+                yield 'c';
+                yield 'd';
+            }
+        }
+        let g1=f1();
+        console.log(g1.next());//{value: "start", done: false}
+        console.log(g1.next());//{value: "a", done: false}
+        console.log(g1.return('end'));//{value: "c", done: false},调用return方法立即执行finally代码快的方法
+        console.log(g1.next());//{value: "d", done: false}
+        console.log(g1.next());//{value: "end", done: true}，等到finally执行完毕后，执行return方法返回指定的值 
+
+
+        /*
+            yield*命令：适用于在一个generator函数中调用另一个generator函数
+
+        */
+        function* start(){
+            yield 'first';
+            yield 'second';
+        };
+        function* end(){
+            yield 'endS';
+            start();
+            yield 'end';
+        };
+
+        /*
+            这说明在一个generator函数中直接调用另一个generator函数是没有效果的
+            需要为被调用者添加一个yield*命令将其转换为遍历器对象
+            yield*后面的generator函数不过是for...of的一种简单形式，可以将yield*写成for...of的形式
+            在有return语句的时候，可以使用var value=yield* iterator的形式接受return的值
+        */
+        for (const item of end()) {
+            console.log(item);//endS,end
+        }
+
+        function* start1(){
+            yield 'first';
+            yield 'second';
+        };
+        function* end1(){
+            yield 'endS';
+            yield* start1();//添加上yield*返回的是一个遍历器对象
+            yield 'end';
+        };
+        for (const item of end1()) {
+            console.log(item);//endS,first,second,end
+        }
+
+        function* start2(){
+            yield 'first';
+            yield 'second';
+        };
+        function* end2(){
+            yield 'endS';
+            yield start2();//添加上yield，返回的是一个迭代器，而不是迭代器里面具体的值
+            yield 'end';
+        };
+        for (const item of end2()) {
+            console.log(item);//endS,迭代器,end
+        }
+
+
+
+        console.log('---------------------');
+        function* start3(){
+            yield 'first';
+            yield 'second';
+            return 'hhh'
+        };
+        function* end3(){
+            yield 'endS';
+            var val=yield* start3();//添加上yield，返回的是一个迭代器，而不是迭代器里面具体的值
+            console.log(val);
+            yield 'end';
+        };
+        // for (const item of end3()) {//for...of不会输出return的值
+        //     console.log(item);//endS,迭代器,end
+        // }
+        let f3=end3();
+        console.log(f3.next());//{value: "endS", done: false}
+        console.log(f3.next());//{value: "first", done: false}
+        console.log(f3.next());//{value: "second", done: false}
+        console.log(f3.next());//hhh,{value: "end", done: false}
+        console.log(f3.next());//{value: undefined, done: true}
+
+        console.log('---------------------');
+        
+    </script>
+</body>
+</html>
