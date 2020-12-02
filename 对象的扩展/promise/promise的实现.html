@@ -7,7 +7,133 @@
 </head>
 <body>
     <script>
+         /*
+            手动实现一个promise
+            （1）promise有3中状态：pending(创建promise的初始状态)，fulfilled(已完成)，rejected(失败);
+            （2）promise一旦创建，就立即执行，promise本身是同步函数，只是promise之后的then方法是异步函数
+            （3）promise的状态只能发生2中变化，pending-fulfilled或者pending-rejected.状态提单发生变化就不能在进行改变
+            （4）promise状态变为成功之后，执行的是then方法，传递的参数是value
+            （5）promise的状态变为失败之后，执行的是catch方法，传递的参数是reason
+
+         */
+         const pending='pending',
+                fulfilled='fulfilled',
+                rejected='rejected';
         
+        class myPromise{
+            /*
+                execute是一个执行器，里面包含这两个函数
+            */
+            constructor(execute){
+                //构造函数
+                this.status=pending;//初始状态为pending
+                this.value=undefined;//初始的value值为undefined
+                this.reason=undefined;//初始的失败的值为undefined
+
+
+                this.onFulfilledStatck=[];//成功时的任务队列
+                this.onRejectedStatck=[];//失败后的任务队列
+
+                //成功的函数
+                const resolve=function(value){
+                    if (this.status==pending) {
+                        this.status=fulfilled;
+                        this.value=value;
+                        //对成功的函数进行发布
+                        this.onFulfilledStatck.forEach(fn=>fn());
+                    }
+                }
+
+                const reject=function(reason){
+                    if (this.status==pending) {
+                        this.status=rejected;
+                        this.reason=reason;
+                        
+                        //对失败的任务进行发布
+                        this.onRejectedStatck.forEach(fn=>fn());
+                    }
+                }
+
+                //异常捕获
+                try {
+                    execute(resolve,reject);
+                } catch (error) {
+                    throw new Error(error);
+                }
+            }
+
+
+            //promise本身有很多静态方法,then用于执行promise状态变为fulfilled的状态，catch用于执行promise状态变为rejected的状态
+            /*
+                then方法接受两个函数作为参数，第一个函数是成功的时候执行的
+                第二个参数是失败时执行的
+                一旦promise的状态发生过改变，就不能在发生改变
+                就是说不能重复调用
+            */
+            then(onFulfilled,onRejected){
+                onFulfilled=typeof onFulfilled==='function' ? onFulfilled : value=>value;
+                onRejected=typeof onRejected ==='function' ?onRejected : reason=()=>{
+                    throw new Error(reason)
+                }
+
+                const isTrue=false;//防止重复调用
+
+                const promise=new myPromise((resolve,reject)=>{
+                    if (this.status==fulfilled) {
+                        if (isTrue) {
+                            return;
+                        }
+                        isTrue=true;
+                        try {
+                            let x=onFulfilled(this.value)
+                        } catch (error) {
+                            reject(error)
+                        }
+                    }
+
+
+                    if (this.status===rejected) {
+                        if (isTrue) {
+                            return;
+                        }
+                        isTrue=true;
+                        try {
+                            let x=onRejected(this.reason)
+                        } catch (error) {
+                            reject(error)
+                        }
+                    }
+
+
+                    //如果状态为pending，就将任务放入队列中
+                    if (this.status===pending) {
+                        this.onFulfilledStatck.push(()=>{
+                            try {
+                                let x=onFulfilled(this.value)
+                            } catch (error) {
+                                reject(error)
+                            }
+                        })
+
+                        this.onRejectedStatck.push(()=>{
+                            try {
+                                let x=onRejected(this.reason)
+                            } catch (error) {
+                                reject(error)
+                            }
+                        })
+                    }
+                })
+
+            }
+
+            catch(){
+                return then(undefined,onRejected)
+            }
+            static all(){}
+            static race(){}
+            static resolve(){}
+        }
     </script>
 </body>
 </html>
