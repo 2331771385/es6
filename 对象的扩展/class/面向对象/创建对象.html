@@ -21,7 +21,7 @@
        person.sayHello();//nym
        /*
        可以使用数据属性对对象的属性进行操作
-       Object.defineProperty(person,name,{})三个参数，第一个参数是属性所在的对象，第二个参数是属性名，第三个属性是一个对象
+       Object.defineProperty(person,name,{})三个参数，第一个参数是属性所在的对象，第二个参数是属性名，必须是一个字符串，第三个属性是一个对象
        对属性name定义了不可写属性，就不能在修改该属性的值
        第三个参数对象所包含的意义：
        configurable：是否可以使用delete删除属性，是否可以修改属性的特性

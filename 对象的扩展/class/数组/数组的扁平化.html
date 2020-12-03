@@ -46,7 +46,7 @@
         console.log(reduceArr(arr));
         function reduceArr(arr) {
            return arr.reduce((pre,cur)=>{
-               return Array.isArray(cur) ? pre.concat(cur):pre.concat(cur) 
+               return Array.isArray(cur) ? pre.concat(reduceArr(cur)):pre.concat(cur) 
             },[])//[]在这里相当于声明了一个新数组
         }
 

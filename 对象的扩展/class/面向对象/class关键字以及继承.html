@@ -11,7 +11,7 @@
         对比es5与es6的创建实例对象以及类的方法
         使用class定义的类必须使用new关键字调用，如果只是单纯的调用类的名称，就会报错
         这是class类与普通的函数的一个主要区别
-        class类中只有静态方法，没有静态属性，如果想要定义静态属性，就在类的外面定义
+        class类中只有静态方法，没有静态属性，如果想要定义静态属性，就在类的外面定义， 或者使用static关键字结合等式声明静态属性
         Person.hobby=''这样就定义了一个静态属性
         如果想要在类里面定义静态属性，还可以在类里面定义属性的时候添加上static关键字
         */
@@ -26,11 +26,13 @@
            getName(){
                console.log(this.name);
            }
-
+           //静态方法是通过类名调用的，因此静态方法中的this指向的是类而不是实例对象
            //在类方法前面加上一个关键字static，就表明该方法是一个静态方法，如果该方法中包含this关键字，表明this指向的是类不是实例对象
            static sayHello(){
                console.log('hello');
            }
+
+           static sex='男'
        }
 
        Person.sayHello();//静态方法直接通过类型来调用
@@ -46,7 +48,7 @@
 
        /*Object.getOwnPropertyDescriptor(obj,name):第一个参数是对象，第二个参数是对象中的属性
        得到的是一个对象，这个队形描述了这个属性该有的操作
-       其中enumerate为false，说明使用class定义的类的方法都是不可枚举的，都不是使用Object.keys()遍历
+       其中enumerate为false，说明使用class定义的类的方法都是不可枚举的，都不能使用Object.keys()遍历
        */
        var des=Object.getOwnPropertyDescriptor(Person.prototype,"getName");
        var arr=[];
@@ -55,6 +57,56 @@
        arr=Object.getOwnPropertyNames(Person)//可以遍历出属性值
        console.log(arr);
        console.log(des);
+
+
+
+
+       /*
+          定义在类内部的方法都是实例方法（static修饰的方法除外），这些方法都是定义在原型对象中
+          如果想在类中定义静态方法，则可以使用static关键字加上等式进行操作，这些更符合代码的标准
+          如果在类外部定义属性，这些属性很容易被忽略。
+       */
+       console.log(Person.prototype);//getName()
+       console.log(Person.sex);//男，静态属性和静态方法都可以通过类名来访问
+
+
+
+       /*
+        new.target可以返回new命令调用的构造函数，如果new命令调用的不是构造函数，则会返回一个undefined
+        如果在继承中，那么new.target返回的是子类的构造函数
+       */
+      function f(name){
+          if (new.target!==undefined) {
+              this.name=name;
+              console.log(this.name);
+          }else{
+              throw new Error('调用的不是构造函数！')
+          }
+      }
+
+      var g=new f('nym');//nym
+      //继承中，new.target返回的是子类的构造函数
+      class Father{
+          constructor(){
+              console.log(new.target===Father);//false,因为子类继承父类，那么new.target指向的就是子类的构造函数
+          }
+      }
+
+      class Son extends Father{
+          constructor(){
+              super();
+          }
+      }
+      var son=new Son();//false
+
+
+      /*
+        实例属性就是通过this关键字定义的属性
+        静态属性就是通过类名在类外定义的属性，或者通过static关键字定义的属性
+        静态属性只能通过类名来定义
+        实例属性通过实例对象来定义
+        类中的this指向的是new关键字创建的实例对象
+      */
     </script>
 </body>
 </html>
