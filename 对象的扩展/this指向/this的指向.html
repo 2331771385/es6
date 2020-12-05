@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            this的指向问题：
+            this的指向与执行上下文有关，this的指向与函数的定义无关，与函数的调用有关
+            看函数作为哪个执行上下文被调用的
+            1.this默认绑定的时候，此时的this指向的是全局，
+        */
+        function f(){
+            console.log(this);//window,此时执行上下文是全局
+        }
+        f();
+
+        //此时返回是被对象调用的，那么此时的执行上下文就是这个对象，当使用隐式绑定的时候，会出现绑定丢失的情况
+        let obj={
+            foo:function(){
+                console.log(this);//obj
+            }
+        }
+        obj.foo();
+
+        /*
+            会出现隐式绑定丢失的情况
+            1.使用一个变量赋值给对象的函数，不会立即执行，而是将这个变量执行函数的地址，然后在执行这个函数
+        */
+        var nameVal='我是全局的nym';
+        let obj1={
+            nameVal:'我是对象中的nym',
+            foo:function(){
+                console.log(this.nameVal);
+            }
+        }
+        obj1.foo();//我是对象中的nym,此时的this指向的是调用 函数的对象
+        let object1=obj1.foo;
+        object1();//我是全局的nym,此时的this指向发生了改变，
+    </script>
+</body>
+</html>

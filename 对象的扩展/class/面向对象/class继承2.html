@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            class的继承是通过extends关键字实现的
+            子类在继承父类的时候，在构造函数中要使用super函数调用父类的构造函数
+            否则回报错
+            因为通过super函数调用父类的构造函数，后面才可以使用this关键字
+            子类本身并没有this关键字，子类调用父类的构造函数的时候，默认情况下返回的this是子类的实例对象
+            super既可以用做函数，也可以作为对象存在
+            super用做函数的时候，只能在子类的构造函数中使用，在别的地方使用会报错
+            super作为对象的时候，如果调用普通方法实际是调用的父类的原型对象上的方法
+            如果调用的是静态方法，调用的实际是父类，因为静态方法是通过类名调用的
+
+
+            new.target能够返回正在执行的类
+        */
+        class Father{
+            constructor(){
+                console.log(new.target.name);
+            }
+        }
+        class Son extends Father{
+            constructor(){
+                super();//子类的构造函数先调用父类的构造函数，执行new.target,此时返回的是子类的类名
+            }
+        }
+
+        let father=new Father();//Father
+        let son=new Son();//Son
+
+        /*
+            在ES5中是先创建的子类的this，然后通过Father.call(this)将父类的this进行绑定
+            在ES6中，子类是没有自己的this的，只能在构造函数中使用super（）调用父类的构造函数，然后在子类的构造函数中修改this
+        */
+        function Father1(name){
+            this.name=name;
+        }
+        function Son1(name){
+            /*
+                子类的构造函数中调用父类的构造方法
+                先创建子类的实例对象this，然后将父类的方法添加到this上面
+            */
+            Father1.call(this,name);
+        }
+        Son1.prototype.getName=function(){
+            console.log(this.name);
+        }
+        let son1=new Son1('NYM');
+        son1.getName();//NYM
+    </script>
+</body>
+</html>

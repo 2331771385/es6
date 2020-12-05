@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            数组中的各种遍历方法：
+            1.for循环遍历的操作,输出每一个元素
+            2.for...of可以迭代数组中每一个元素，返回的是数组中的每一个值，也就是value
+            3.for...in以任意顺序迭代对象的可枚举属性，返回的是属性的下标，也就是index
+            4.forEach();第一个参数是一个回调函数，这个回调函数中有三个值，分别表示当前元素，当前元素的索引，以及当前数组
+                第二个参数是一个可以改变的this属性，这个方法没有返回值
+            5.map()返回一个新数组，数组中的每一项都会调用map定义的函数规则，然后返回一个新的数组
+                map方法不改变原数组的值
+            6.reduce():对数组中的每一个值执行一次reduce定义的函数，然后汇总成想要的数据
+                注意：如果reduce方法没有提供初始值并且数组为空，则会抛出错误
+                    如果reduce只是没有提供初始值，则默认会从下标为1的元素开始执行，默认会跳过下标为0的元素
+                    如果没有返回值，下次累计器的值为undefined
+            7.filter()返回一个数组，数组中的元素都是满足filter中的回调函数中的值,不改变原数组
+            8.every():返回的是一个布尔值，如果数组中的每一个元素都满足every函数里的条件，就返回true,否则返回false
+            9.some()与every正好相反，只要数组中有一项满足条件就返回true,反之，都不满足才会返回false
+            10.find():返回数组中第一个满足要求的元素
+            11.findIndex():返回第一个满足需求的元素的下标
+            12.keys():遍历数组的键名，在数组中，也就是数组元素的下标，返回的是一个新数组
+                values():遍历数组的键值，在数组中，也就是数组元素的值，返回的是一个新数组
+                entries():遍历数组的键值对，在数组中，键名是数组的下标，键值是数组中的元素
+        */
+        let arr=[1,2,3,true,'hello'];
+        for(let i=0;i<arr.length;i++){
+            console.log(arr[i]);//返回各个元素，1，2，3,true,hello
+        }
+        for (const item of arr) {
+            console.log(item);//返回各个元素，1，2，3,true,hello
+        }
+        for (const item in arr) {
+            console.log(item);//返回的是数组中每一项的下标
+        }
+        arr.forEach((val,index,a)=>{
+            console.log(val,index,a);//返回的是当前遍历的元素，下标，以及当前遍历的数组
+        })
+
+        let arr1=[1,2,3]
+        let arrMap=arr1.map(x=>x*x);
+        console.log(arrMap);//[1,4,9]，返回的新数组
+        console.log(arr1);//[1,2,3]，map不改变原数组的值
+
+        //对数组arr1进行累加求和
+        let val=arr1.reduce((pre,cur)=>{
+            return pre+cur;
+        },0)
+        console.log(val);//6
+        
+        let arr2=[1,4,3,7,5];
+        let b=arr2.filter(item=>item<4);
+        console.log(arr2)//不改变原数组
+        console.log(b);//返回的是满足筛选条件的值组成的数组
+
+        let flag=arr1.every(item=>item<10);
+        console.log(flag);//true,说明数组中的每一项都小于10
+
+        let flag1=arr2.some(item=>item<2);
+        console.log(flag1);//true,说明数组中的元素至少有一项满足要求
+        let flag2=arr2.some(item=>item<1);
+        console.log(flag2);//false,说明数组中的每一项都不满足条件
+
+        let ele=arr2.find(item=>item>3);
+        console.log(ele);//4
+
+        let eleIndex=arr2.findIndex(item=>item>3);
+        console.log(eleIndex);//下标1，则说明是4
+
+        console.log('--------------------------');
+        let strArr=['hello','world','say'];
+        for (const item of strArr.keys()) {
+            console.log(item);//0,1,2
+        }
+
+        for (const item of strArr.values()) {
+            console.log(item);//hello,world,say
+        }
+
+        for (const item of strArr.entries()) {
+            console.log(item);//[0,'hello'],[1,'world'],[2,'say']
+        }
+
+
+
+
+        /*
+            改变原数组的方法的使用：
+            1.sort(callback):对数组中的元素进行排序，callback是可选的，如果没有参数，则数组中的各个元素按照转换为对应的unicode
+                位点来进行排序
+                如果指定了参数，如果a>b,则按照降序的顺序排序，如果a<b,则按照升序的顺序排列
+            2.push():向数组的尾部添加一个或多个元素，并且修改原数组，返回新数组的长度
+            3.pop():从数组的尾部删除一个元素，改变原数组，返回的是删除的元素
+            4.shift():从数组的头部删除一个元素，返回的是删除的元素，
+            5.unshift():向数组的头部添加1个或多个元素，返回的是新数组的长度
+            6.split():将字符串按照指定的字符拆分成数组的形式,这个方法没有原数组，返回的新数组中包含了分割后的每一个数组项
+            7.splice();通过删除或者替换现有元素或者原地添加元素来改变原有的数组，最后返回一个新元素
+                第一个参数是开始删除或添加元素的位置，可以是负数，如果是负数，则使用arr.length-n,从数组的尾部开始删除或者添加
+                第二个参数是删除元素的个数，如果是0，则代表不删除元素
+                第三个元素。。。则代表添加的元素
+        */
+        let sortArr=[1,10,3,5,32];
+        //不指定参数的情况
+        sortArr.sort();
+        console.log(sortArr);//[1,10,3,32,5]
+
+        sortArr.sort((a,b)=>a-b);
+        console.log(sortArr);//[1, 3, 5, 10, 32] 按照升序的顺序排列数组中的元素
+
+        sortArr.sort((a,b)=>b-a);
+        console.log(sortArr);//[32, 10, 5, 3, 1]按照降序的顺序排列元素
+
+        let len=sortArr.push(3,4,6);
+        console.log(sortArr);//[32, 10, 5, 3, 1, 3, 4, 6]
+        console.log(len);//8,代表的是数组的长度
+
+        let element=sortArr.pop();
+        console.log(element);//6,代表的是删除的元素6
+        console.log(sortArr);//[32, 10, 5, 3, 1, 3, 4]
+
+        let shift=sortArr.shift();
+        console.log(shift);//32,代表的是删除的头部元素32
+        console.log(sortArr);//[10, 5, 3, 1, 3, 4]，
+
+        let newLen=sortArr.unshift(90,78);
+        console.log(newLen);//8,代表的是新数组的长度
+        console.log(sortArr);//[90, 78, 10, 5, 3, 1, 3, 4]
+
+
+        let str='hello,world,say';
+        str=str.split(',');
+        console.log(str);//["hello", "world", "say"]
+
+
+        let string=['nym','lwl','wmm','xzd'];
+        //向原有的数组中添加新的元素,从下标为2的位置开始，不删除元素，添加元素
+        string.splice(2,0,'hhh','jjj');
+        console.log(string);//["nym", "lwl", "hhh", "jjj", "wmm", "xzd"]
+
+        string.splice(3,2);
+        console.log(string);//["nym", "lwl", "hhh", "xzd"]
+
+        //如果删除的元素个数大于第一个参数后的个数，则会将第一个参数之后的元素都删除
+        string.splice(2,4);
+        console.log(string);//["nym", "lwl"]删除的个数大于第一个参数之后的个数，则会将数组中剩余的元素都删除掉
+
+
+        /*
+            1.map():数组中的每一项都会调用map定义的函数，然后返回一个新数组，不改变原数组
+            2.slice():获取数组中的某一个片段，这个片段包含这起始位置和终止位置，但是终止位置的包含在内,不改变原数组
+        */
+        console.log('----------------------');
+        let mapArr=[1,3,5];
+        let mapA=mapArr.map(x=>x*x);
+        console.log(mapA);//[1, 9, 25]
+        console.log(mapArr);//[1,3,5]
+
+        let sliceArr=[1,2,3,4,8,6,7,8,5,3];
+        let slice=sliceArr.slice(3,6);
+        console.log(slice);//[4, 8, 6]，返回的新数组中的数据包含下标3，但是不包含下标6
+        console.log(sliceArr);//[1,2,3,4,8,6,7,8,5,3]
+    </script>
+</body>
+</html>
