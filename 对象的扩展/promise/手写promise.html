@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            学习了这么长时间的promise，今天决定自己实现一个promise的过程
+            并且在最后使用实例来验证编写的promise的正确性
+
+            1.在调用promise构造函数来创建promise实例的时候，会自动执行代码
+                所以promise的构造函数中有一个自动执行函数executor自动执行代码
+            2.在创建promise实例的时候，会向构造函数中传递一个参数，这个参数是一个executor函数
+            3.在这个函数中，包含两个参数，这两个参数都是函数，用于判断成功与失败
+            4.成功的时候会接受一个成功的返回值，失败的时候会给出失败的理由
+            5.因为在创建promise实例对象的时候，当前实例对象的状态为pending
+            6.每一个promise实例对象都有一个then方法,then方法也接受两个参数，成功的时候执行第一个参数代表的函数
+                失败的时候执行第二个参数代表的函数
+            7.promise的状态只有3中，pending,fulfilled,rejected,并且状态的改变只能从pending变为fulfilled,
+                或者从pending变为rejected
+            8.then中可能会发生值穿透的情况，此时就需要将then中的值进行记录
+            9.因为then返回的又是一个promise,所以在then中定义一个promise
+            10.在返回的promise中，有三种情况，就是调用then的时候promise有三种状态，即初始时的pending,成功时的状态fulfilled
+                失败时的rejected
+        */
+       function Promise(executor){
+           var self=this;//防止this混乱
+           self.status='pending';//创建promise实例对象时的初始状态
+           self.value;//成功的值
+           self.reason;//失败的原因
+           self.onFulFilledStatck=[];//用于存放成功的回调
+           self.onRejectedStatck=[];//用于存放失败的回调
+
+           function resolve(value){
+                if (self.status==='pending') {
+                    self.status='fulfilled';
+                    self.value=value;
+                    //执行成功列表的函数
+                    self.onFulFilledStatck.forEach(function(fn){
+                        fn()
+                    })
+                }
+           }
+           function reject(reason){
+                if (self.status==='pending') {
+                    self.status='rejected';
+                    self.reason=reason;
+                    //执行失败里面的函数列表,当有多个失败的函数时，会依次调用失败的函数
+                    self.onRejectedStatck.forEach(function(fn){
+                        fn()
+                    })
+                }
+           }
+           try {
+                executor(resolve,reject);
+           } catch (e) {
+               reject(e);
+           }
+          
+       };
+
+
+       //有一个比较函数，用于比较then返回的值时promise还是简单类型的值
+       function resolvePromise(promise2,x,resolve,reject){
+            if (promise2===x) {
+                return reject(new Error('循环调用了'));//then返回的promise调用了自己
+            }
+            let callee;//防止重复调用
+            if ((x!==null && typeof x==='object')|| typeof x==='function') {
+                try {
+                   let then=x.then;
+                   if (typeof then==='function') {
+                       then.call(x,function(y){
+                        if (callee) {
+                            return;
+                        }
+                        callee=true;
+                        resolvePromise(promise2,y,resolve,rject);
+                       },function(r){
+                            reject(r)
+                       })
+                   } else{
+                        resolve(x);//返回的时简单类型
+                   }
+                } catch (e) {
+                    if (callee) {
+                        return;
+                    }
+                    callee=true;
+                    reject(e)
+                }
+            }else{
+                if (callee) {
+                    return;
+                }
+                callee=true;
+                resolve(x);//返回的时简单类型
+            }
+       }
+
+
+
+       Promise.prototype.then=function(onFulFilled,onRejected){
+        onFulFilled=typeof onFulFilled==='function'?onFulFilled:function(data){return data};
+        onRejected=typeof onRejected==='function'?onRejected:function(err){return err};
+        var self=this;
+        const promise2=new Promise((resolve,reject)=>{
+            if (self.status==='fulfilled') {
+                setTimeout(()=>{
+                    try {
+                        const x=onFulFilled(self.value);
+                        resolvePromise(promise2,x,resolve,reject);
+                    } catch (e) {
+                        reject(e);
+                    }
+                    
+                },0)
+            }
+
+            if (self.status==='rejected') {
+                setTimeout(()=>{
+                    try {
+                        const x=onRejected(self.reason);
+                        resolvePromise(promise2,x,resolvePromise,reject);
+                    } catch (e) {
+                        reject(e)
+                    }
+                },0)
+            }
+
+            if (self.status==='pending') {
+                self.onFulFilledStatck.push(function(){
+                    setTimeout(()=>{
+                        try {
+                            const x=onFulFilled(self.value);
+                            resolvePromise(promise2,x,resolve,reject)
+                        } catch (e) {
+                            reject(e)
+                        }
+                    },0)
+                })
+
+                self.onRejectedStatck.push(function(){
+                    setTimeout(()=>{
+                        try {
+                            const x=onRejected(self.reason);
+                            resolvePromise(promise2,x,resolve,reject);
+                        } catch (e) {
+                            reject(e)
+                        }
+                    },0)
+                })
+                
+            }
+        })
+        return promise2;
+       }
+    </script>
+</body>
+</html>
